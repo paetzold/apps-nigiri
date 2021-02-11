@@ -1,4 +1,4 @@
-# mappy
+# Nigiri project.
 
 Sample application used to test and develop map functionalities via Mapbox.
 
