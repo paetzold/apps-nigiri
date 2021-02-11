@@ -40,6 +40,6 @@ flutter_icons:
 flutter:
   uses-material-design: true
   assets:
-    - assets/config.json
+    - assets/appConfig.json
     - assets/mappy_icon.png
     - assets/place_24px.png
