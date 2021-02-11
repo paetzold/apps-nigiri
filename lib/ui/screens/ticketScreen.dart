@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mappy/XDTextStyles.dart';
-import 'package:mappy/ui/comps/SearchTextField.dart';
+import 'package:mappy/ui/comps/searchtextfield.dart';
 
 class TicketScreen extends StatefulWidget {
   TicketScreen({Key key}) : super(key: key);
