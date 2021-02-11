@@ -15,3 +15,15 @@ Before building the application, you need to provide a `config.json` file in the
 
 
 https://blog.codemagic.io/inappwebview-the-real-power-of-webviews-in-flutter/
+
+
+- Provider / IL  : locations (+Details), predictions
+- Mapp mit Hooks: 
+  - Provider für locations and details 
+  - details + URL 
+  - account navigation (icon + route)
+- Account Managment
+  - Login
+  - Create / Edit
+- Ticket verkauf
+  - Product catalog

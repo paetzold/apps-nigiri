@@ -1,10 +1,12 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:mappy/ui/screens/ticketScreen.dart';
 import 'package:mappy/utils/helpers/config.helper.dart';
 import 'package:mappy/utils/helpers/location.helper.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -14,13 +16,13 @@ import '../../blocs/geocoding.bloc.dart';
 import '../../blocs/geocoding.event.dart';
 import '../../blocs/geocoding.state.dart';
 
-final PanelController _pc = PanelController();
-
 class HomeScreen extends StatelessWidget {
-  BorderRadiusGeometry radius = BorderRadius.only(
+  final BorderRadiusGeometry radius = BorderRadius.only(
     topLeft: Radius.circular(24.0),
     topRight: Radius.circular(24.0),
   );
+
+  final PanelController _pc = PanelController();
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +42,12 @@ class HomeScreen extends StatelessWidget {
               children: [
                 SlidingUpPanel(
                   controller: _pc,
+                  parallaxEnabled: true,
+                  parallaxOffset: 0.5,
                   header: Container(
                     width: MediaQuery.of(context).size.width,
-                    height: 20,
+                    color: Colors.white,
+                    height: 30,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
@@ -92,12 +97,11 @@ class HomeScreen extends StatelessWidget {
                       await controller.animateCamera(
                         CameraUpdate.newLatLng(result),
                       );
-
                       await controller.addCircle(
                         CircleOptions(
                           circleRadius: 8.0,
                           circleColor: '#006992',
-                          circleOpacity: 0.8,
+                          circleOpacity: 0.5,
                           geometry: result,
                           draggable: false,
                         ),
@@ -132,15 +136,36 @@ class HomeScreen extends StatelessWidget {
                 ),
                 Container(
                   margin: EdgeInsets.all(20),
+                  alignment: Alignment(1.0, -0.8),
                   child: FloatingActionButton(
-                    child: Icon(Icons.location_on_sharp),
+                    heroTag: "btn1",
+                    backgroundColor: Colors.black,
+                    child: Icon(Icons.account_circle_outlined),
                     onPressed: () async {
-                      final result = await acquireCurrentLocation();
-                      _mapController
-                          .animateCamera(CameraUpdate.newLatLng(result));
+                      //Navigator.pushNamed(context, '/ticket');
+                      Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => TicketScreen()));
                     },
                   ),
-                )
+                ),
+                Container(
+                  margin: EdgeInsets.all(20),
+                  alignment: Alignment(1.0, -1),
+                  child: FloatingActionButton(
+                    heroTag: "btn2",
+                    backgroundColor: Colors.black,
+                    child: Icon(Icons.dashboard_customize),
+                    onPressed: () async {
+                      //Navigator.pushNamed(context, '/ticket');
+                      Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => TicketScreen()));
+                    },
+                  ),
+                ),
               ],
             );
           } else if (snapshot.hasError) {
@@ -167,7 +192,8 @@ class HomeScreen extends StatelessWidget {
         child: Icon(Icons.location_on_sharp),
         onPressed: () async {
           final result = await acquireCurrentLocation();
-          _mapController.animateCamera(CameraUpdate.newLatLng(result));
+          _mapController
+              .animateCamera(CameraUpdate.newLatLngZoom(result, 16.0));
         },
       ),
     );

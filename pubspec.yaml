@@ -20,10 +20,12 @@ dependencies:
 
   # HTTP
   http: ^0.12.2
-
   sliding_up_panel: ^1.0.2
-
   flutter_inappwebview: any
+
+
+  # Misc
+  adobe_xd : any
 
 dev_dependencies:
   flutter_test:
