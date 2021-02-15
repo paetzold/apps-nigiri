@@ -41,6 +41,7 @@ jobs:
         target_branch: gh-pages
         build_dir: build/app/outputs/apk/release
         repo: paetzold/newmobility
+        directory: download
       env:
         GITHUB_TOKEN: ${{ secrets.API_TOKEN_GITHUB }}
     #- name: Push changes
