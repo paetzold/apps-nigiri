@@ -30,6 +30,5 @@ jobs:
     - name: deploy docs
       uses: actions/upload-artifact@v2
       with:
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
         remote_url: https://github.com/paetzold/newmobility.git
+        pages_directory: build/app/outputs/apk/release
