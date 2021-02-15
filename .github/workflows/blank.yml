@@ -40,6 +40,4 @@ jobs:
         build_dir: build/app/outputs/apk/release
         repo: paetzold/newmobility
       env:
-        GITHUB_TOKEN: b364c9dd9611e4983ac562ab8cb1a0c17d014d27
-        # ${{ secrets.GITHUB_TOKEN }}
- 
+        GH_PAT: b364c9dd9611e4983ac562ab8cb1a0c17d014d27
