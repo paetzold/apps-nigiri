@@ -27,8 +27,12 @@ jobs:
         name: app-download
         path: build/app/outputs/apk/release/app-release.apk
         
-    - name: deploy docs
-      uses: actions/upload-artifact@v2
+    - name: deploy apk
+      uses: crazy-max/ghaction-github-pages@v2
       with:
-        remote_url: https://github.com/paetzold/newmobility.git
-        pages_directory: build/app/outputs/apk/release
+          target_branch: gh-pages
+          build_dir: build/app/outputs/apk/release
+          repo: https://github.com/paetzold/newmobility.git
+      env:
+        GITHUB_TOKEN: c975f4b2da2a63759ad98a5cbe37687e10185cff
+ 
