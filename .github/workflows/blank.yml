@@ -40,9 +40,9 @@ jobs:
       with:
         target_branch: gh-pages
         build_dir: build/app/outputs/apk/release
-        # repo: paetzold/newmobility
+        repo: paetzold/newmobility
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.API_TOKEN_GITHUB }}
     #- name: Push changes
     #  uses: ad-m/github-push-action@master
     #  with:
@@ -51,13 +51,13 @@ jobs:
     #    branch: gh-pages
     #    repository: paetzold/newmobilty
         
-    - name: Pushes to another repository
-      uses: cpina/github-action-push-to-another-repository@master
-      env:
-        API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-      with:
-        source-directory: 'build/app/outputs/apk/release'
-        destination-github-username: 'paetzold'
-        destination-repository-name: 'newmobility'
-        user-email: kay.paetzold@gmail.com 
-        target-branch: gh-pages
+    #- name: Pushes to another repository
+    #  uses: cpina/github-action-push-to-another-repository@master
+    #  env:
+    #    API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+    #  with:
+    #    source-directory: 'build/app/outputs/apk/release'
+    #    destination-github-username: 'paetzold'
+    #    destination-repository-name: 'newmobility'
+    #    user-email: kay.paetzold@gmail.com 
+    #    target-branch: gh-pages
