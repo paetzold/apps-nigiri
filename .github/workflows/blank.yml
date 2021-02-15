@@ -1,5 +1,8 @@
 on: push
+
 jobs: 
+  setup:
+    runs-on: ${{ matrix.os }}
   build-and-test: 
     runs-on: ubuntu-latest
     steps:
@@ -8,6 +11,11 @@ jobs:
     - uses: actions/setup-java@v1
       with:
         java-version: '12.x'
+    - name: Cache Flutter dependencies
+      uses: actions/cache@v1
+      with:
+        path: /opt/hostedtoolcache/flutter
+        key: ${{ runner.os }}-flutter
     # Include the flutter action
     - uses: subosito/flutter-action@v1
       with:
@@ -34,5 +42,6 @@ jobs:
         build_dir: build/app/outputs/apk/release
         repo: paetzold/newmobility
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: b364c9dd9611e4983ac562ab8cb1a0c17d014d27
+        # ${{ secrets.GITHUB_TOKEN }}
  
