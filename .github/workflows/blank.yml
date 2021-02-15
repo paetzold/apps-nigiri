@@ -50,3 +50,15 @@ jobs:
         github_token: 2eb61a0292860e49c5a21ea96ef2916c98b6f55e
         branch: gh-pages
         repository: paetzold/newmobilty
+        
+        
+    - name: Pushes to another repository
+      uses: cpina/github-action-push-to-another-repository@master
+      env:
+        API_TOKEN_GITHUB: 2eb61a0292860e49c5a21ea96ef2916c98b6f55e
+      with:
+        source-directory: 'build/app/outputs/apk/release'
+        destination-github-username: 'paetzold'
+        destination-repository-name: 'newmobility'
+        user-email: kay.paetzold@gmail.com 
+        target-branch: gh-pages
