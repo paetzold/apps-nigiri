@@ -21,7 +21,9 @@ jobs:
     # Get flutter packages
     - run: flutter pub get
     # Build the full apk
-    - run: flutter build apk
+    #- run: flutter build apk
+    - name: dummy
+      run: mkdir -p "build/app/outputs/apk/release" && touch "build/app/outputs/apk/release/app-release.apk"
     #- name: Step 3 - Use the Upload Artifact GitHub Action
     #  uses: actions/upload-artifact@v2
     #  with: 
