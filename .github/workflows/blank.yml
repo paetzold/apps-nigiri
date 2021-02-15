@@ -1,9 +1,7 @@
 on: push
 
 jobs: 
-  setup:
-    runs-on: ${{ matrix.os }}
-  build-and-test: 
+  build-and-deply: 
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1 
@@ -22,7 +20,7 @@ jobs:
         channel: 'stable'  
     # Get flutter packages
     - run: flutter pub get
-    # Build :D 
+    # Build the full apk
     - run: flutter build apk
     #- name: Step 3 - Use the Upload Artifact GitHub Action
     #  uses: actions/upload-artifact@v2
