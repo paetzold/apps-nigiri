@@ -40,6 +40,6 @@ jobs:
       with:
         target_branch: gh-pages
         build_dir: build/app/outputs/apk/release
-        repo: paetzold/newmobility
+        # repo: paetzold/newmobility
       env:
-        GITHUB_TOKEN: b364c9dd9611e4983ac562ab8cb1a0c17d014d27
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
