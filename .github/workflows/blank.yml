@@ -43,3 +43,10 @@ jobs:
         # repo: paetzold/newmobility
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        directory: build/app/outputs/apk/release
+        github_token: 2eb61a0292860e49c5a21ea96ef2916c98b6f55e
+        branch: gh-pages
+        repository: paetzold/newmobilty
