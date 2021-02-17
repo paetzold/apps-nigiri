@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class XDTextStyles {
   static const TextStyle title = const TextStyle(
-    fontFamily: 'Helvetica',
-    fontSize: 30,
-    color: const Color(0xff333333),
-    fontWeight: FontWeight.w700,
-  );
+      fontFamily: 'Helvetica',
+      fontSize: 30,
+      color: const Color(0xff333333),
+      fontWeight: FontWeight.w700,
+      backgroundColor: Colors.red);
   static const TextStyle body = const TextStyle(
     fontFamily: 'Georgia',
     fontSize: 16,
