@@ -34,14 +34,8 @@ class AppConfig extends ChangeNotifier {
       ];
 }
 
-Function WithAppConfig = (wrapped) => ChangeNotifierProvider(
-      create: (context) => AppConfig(),
-      child: Consumer<AppConfig>(
-        builder: (context, appConfig, child) {
-          return wrapped;
-        },
-      ),
-    );
+Function WithAppConfig = (wrapped) =>
+    ChangeNotifierProvider(create: (context) => AppConfig(), child: wrapped);
 
 Function UseAppConfig = (builder) => Consumer<AppConfig>(
       builder: builder,

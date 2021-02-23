@@ -2,6 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:mappy/XDTextStyles.dart';
 import 'package:mappy/ui/comps/searchtextfield.dart';
 
+class User {
+  static const String PassionCooking = 'cooking';
+  static const String PassionHiking = 'hiking';
+  static const String PassionTraveling = 'traveling';
+  String firstName = '';
+  String lastName = '';
+  Map passions = {
+    PassionCooking: false,
+    PassionHiking: false,
+    PassionTraveling: false
+  };
+  bool newsletter = false;
+  save() {
+    print('saving user using a web service');
+  }
+
+  @override
+  String toString() {
+    return firstName + ' ' + lastName;
+  }
+}
+
 class TicketScreen extends StatefulWidget {
   TicketScreen({Key key}) : super(key: key);
 
@@ -10,7 +32,9 @@ class TicketScreen extends StatefulWidget {
 }
 
 class _TicketScreenState extends State<TicketScreen> {
-  final _formKey = GlobalKey();
+  final _formKey = GlobalKey<FormState>();
+
+  var _user = User();
 
   var _searchTxt = "";
 
@@ -40,19 +64,24 @@ class _TicketScreenState extends State<TicketScreen> {
                             labelText: 'Email',
                             focusedBorder: UnderlineInputBorder(),
                           ),
+                          onSaved: (val) =>
+                              setState(() => _user.firstName = val),
                         ),
                         PasswordFormField(
                           labelText: 'Password',
+                          onSaved: (val) =>
+                              setState(() => _user.lastName = val),
                         ),
                         LinkText(text: 'Forgot password ?'),
-                        SearchTextField(onSearch: (data) {
-                          setState(() {
-                            _searchTxt = data;
-                          });
-                        }),
-                        Text(_searchTxt),
                         FlatButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _formKey.currentState.save();
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                                content:
+                                    Text('Submitting form ' + _user.toString()),
+                                backgroundColor: Colors.redAccent,
+                                duration: Duration(seconds: 1)));
+                          },
                           color: Colors.black,
                           highlightColor: Colors.grey,
                           child: Text('Ok', style: XDTextStyles.strong),
@@ -67,12 +96,14 @@ class _TicketScreenState extends State<TicketScreen> {
 
 class PasswordFormField extends StatelessWidget {
   final String labelText;
+  final void Function(String val) onSaved;
 
   final TextEditingController _controller = new TextEditingController();
 
   PasswordFormField({
     Key key,
     this.labelText = '',
+    this.onSaved,
   }) : super(key: key);
 
   @override
@@ -88,6 +119,7 @@ class PasswordFormField extends StatelessWidget {
               _controller.clear();
             }),
       ),
+      onSaved: this.onSaved,
       obscureText: true,
     );
   }

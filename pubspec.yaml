@@ -26,6 +26,8 @@ dependencies:
   shared_preferences : any
   url_launcher : any
   provider : any
+  google_directions_api : any
+  
   # Misc
   adobe_xd : any
 

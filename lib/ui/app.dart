@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:mappy/ui/screens/home.screen.dart';
 
 import 'package:mappy/ui/screens/ticketScreen.dart';
-import 'package:mappy/utils/constants/color.consts.dart';
 
 //import '../Home.dart';
 
