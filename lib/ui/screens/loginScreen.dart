@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mappy/XDTextStyles.dart';
-import 'package:mappy/ui/comps/searchtextfield.dart';
+
+import 'appScreen.dart';
 
 class User {
   static const String PassionCooking = 'cooking';
@@ -24,73 +25,59 @@ class User {
   }
 }
 
-class TicketScreen extends StatefulWidget {
-  TicketScreen({Key key}) : super(key: key);
+class LoginScreen extends StatefulWidget {
+  LoginScreen({Key key}) : super(key: key);
 
   @override
-  _TicketScreenState createState() => _TicketScreenState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _TicketScreenState extends State<TicketScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   var _user = User();
 
-  var _searchTxt = "";
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Builder(
-              builder: (context) => Form(
-                  key: _formKey,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text("Log In",
-                            style: Theme.of(context).textTheme.headline1),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: 'Email',
-                            focusedBorder: UnderlineInputBorder(),
-                          ),
-                          onSaved: (val) =>
-                              setState(() => _user.firstName = val),
-                        ),
-                        PasswordFormField(
-                          labelText: 'Password',
-                          onSaved: (val) =>
-                              setState(() => _user.lastName = val),
-                        ),
-                        LinkText(text: 'Forgot password ?'),
-                        FlatButton(
-                          onPressed: () {
-                            _formKey.currentState.save();
-                            Scaffold.of(context).showSnackBar(SnackBar(
-                                content:
-                                    Text('Submitting form ' + _user.toString()),
-                                backgroundColor: Colors.redAccent,
-                                duration: Duration(seconds: 1)));
-                          },
-                          color: Colors.black,
-                          highlightColor: Colors.grey,
-                          child: Text('Ok', style: XDTextStyles.strong),
-                          padding: const EdgeInsets.all(15.0),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(30.0)),
-                        ),
-                      ]))),
-        ));
+    return AppScreen(
+      title: 'Log In',
+      child: Builder(
+          builder: (context) => Form(
+              key: _formKey,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        focusedBorder: UnderlineInputBorder(),
+                      ),
+                      onSaved: (val) => setState(() => _user.firstName = val),
+                    ),
+                    PasswordFormField(
+                      labelText: 'Password',
+                      onSaved: (val) => setState(() => _user.lastName = val),
+                    ),
+                    LinkText(text: 'Forgot password ?'),
+                    FlatButton(
+                      onPressed: () {
+                        _formKey.currentState.save();
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                            content:
+                                Text('Submitting form ' + _user.toString()),
+                            backgroundColor: Colors.redAccent,
+                            duration: Duration(seconds: 1)));
+                        Navigator.of(context).pushNamed("/account/edit");
+                      },
+                      color: Colors.black,
+                      highlightColor: Colors.grey,
+                      child: Text('Ok', style: XDTextStyles.strong),
+                      padding: const EdgeInsets.all(15.0),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30.0)),
+                    ),
+                  ]))),
+    );
   }
 }
 

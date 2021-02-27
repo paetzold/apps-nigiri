@@ -21,6 +21,8 @@ class AppScreen extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(leading: left),
+        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomPadding: false,
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -28,9 +30,12 @@ class AppScreen extends StatelessWidget {
             children: [
               Text(this.title, style: Theme.of(context).textTheme.headline1),
               SizedBox(height: 16.0),
-              UseAppConfig((context, appConfig, child) {
-                return Expanded(child: this.child);
-              })
+              Expanded(
+                  child: SingleChildScrollView(
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom),
+                      reverse: true,
+                      child: this.child))
             ],
           ),
         ));

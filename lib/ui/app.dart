@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mappy/ui/screens/accountEditScreen.dart';
 import 'package:mappy/ui/screens/home.screen.dart';
-
-import 'package:mappy/ui/screens/ticketScreen.dart';
+import 'package:mappy/ui/screens/loginScreen.dart';
 
 //import '../Home.dart';
 
@@ -20,7 +20,8 @@ class App extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => HomeScreen(),
-        '/ticket': (context) => TicketScreen(),
+        '/ticket': (context) => LoginScreen(),
+        '/account/edit': (context) => AccountEditScreen(),
       },
     );
   }

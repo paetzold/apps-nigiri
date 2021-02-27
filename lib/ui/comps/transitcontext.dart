@@ -54,7 +54,8 @@ class TransitContext extends ChangeNotifier {
     final directionsService = DirectionsService();
     final request = DirectionsRequest(
         origin: 'Hamburg, Grotenkamp, Germany',
-        destination: 'Hannover, Germany',
+        destination:
+            "${this.destination.latlon.latitude},${this.destination.latlon.longitude}",
         travelMode: TravelMode.driving,
         unitSystem: UnitSystem.metric);
     directionsService.route(request,
@@ -62,7 +63,6 @@ class TransitContext extends ChangeNotifier {
       if (status == DirectionsStatus.ok) {
         // do something with successful response
         print(response.routes);
-
         polyline = decodePolyline(response.routes[0].overviewPolyline.points);
       } else {
         // do something with error response

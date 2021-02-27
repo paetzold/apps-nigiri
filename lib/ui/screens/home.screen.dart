@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:mappy/ui/comps/transitcontext.dart';
 import 'package:mappy/ui/screens/searchscreen.dart';
-import 'package:mappy/ui/screens/ticketScreen.dart';
+import 'package:mappy/ui/screens/LoginScreen.dart';
 import 'package:mappy/utils/helpers/config.helper.dart';
 import 'package:mappy/utils/helpers/location.helper.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -29,6 +29,8 @@ class HomeScreen extends StatelessWidget {
 
   static MapboxMapController _mapController;
 
+  Line oldLine;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +47,8 @@ class HomeScreen extends StatelessWidget {
                   final String style =
                       snapshot.data['mapbox_style_url'] as String;
 
-                  if (_mapController != null) {
+                  if (_mapController != null &&
+                      transitContext.polyline != null) {
                     _mapController.clearLines();
                     var t = transitContext.polyline
                         .map((p) {
@@ -54,14 +57,19 @@ class HomeScreen extends StatelessWidget {
                         .toList()
                         .cast<LatLng>();
 
-                    _mapController.addLine(
-                      LineOptions(
-                          geometry: t,
-                          lineColor: "#ff0000",
-                          lineWidth: 4.0,
-                          lineOpacity: 0.5,
-                          draggable: true),
-                    );
+                    Future.delayed(const Duration(milliseconds: 500), () async {
+                      if (oldLine != null) {
+                        _mapController.removeLine(oldLine);
+                      }
+                      oldLine = await _mapController.addLine(
+                        LineOptions(
+                            geometry: t,
+                            lineColor: "#ff0000",
+                            lineWidth: 4.0,
+                            lineOpacity: 0.5,
+                            draggable: true),
+                      );
+                    });
                   }
                   return Stack(
                     children: [
@@ -301,41 +309,52 @@ class MoreWidget extends StatefulWidget {
 
 class _MoreWidgetState extends State<MoreWidget> {
   bool isOpen = false;
-  var padding = 20.0;
+
+  var padding = 0.0;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: Duration(seconds: 10),
+      duration: Duration(milliseconds: 200),
+      curve: Curves.fastOutSlowIn,
       margin: EdgeInsets.all(20),
       alignment: this.widget.alignment,
       child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-        this.isOpen
-            ? FloatingActionButton(
-                heroTag: "btn1",
-                backgroundColor: Colors.black,
-                child: Icon(Icons.more_vert),
-                onPressed: () async {
-                  //Navigator.pushNamed(context, '/ticket');
-                  Navigator.push(context,
-                      CupertinoPageRoute(builder: (context) => MoreScreen()));
-                },
-              )
-            : SizedBox(),
-        SizedBox(width: padding),
-        this.isOpen
-            ? FloatingActionButton(
+        AnimatedOpacity(
+          opacity: (padding / 60.0),
+          duration: Duration(milliseconds: 200),
+          child: SizedBox(
+            width: padding,
+            child: FloatingActionButton(
+              heroTag: "btn1",
+              backgroundColor: Colors.black,
+              child: Icon(Icons.more_vert),
+              onPressed: () async {
+                //Navigator.pushNamed(context, '/ticket');
+                Navigator.push(context,
+                    CupertinoPageRoute(builder: (context) => MoreScreen()));
+              },
+            ),
+          ),
+        ),
+        SizedBox(width: 20),
+        AnimatedOpacity(
+          opacity: (padding / 60.0),
+          duration: Duration(milliseconds: 200),
+          child: SizedBox(
+              width: padding,
+              child: FloatingActionButton(
                 heroTag: "btn2",
                 backgroundColor: Colors.black,
                 child: Icon(Icons.account_circle_sharp),
                 onPressed: () async {
                   //Navigator.pushNamed(context, '/ticket');
                   Navigator.push(context,
-                      CupertinoPageRoute(builder: (context) => TicketScreen()));
+                      CupertinoPageRoute(builder: (context) => LoginScreen()));
                 },
-              )
-            : SizedBox(),
-        SizedBox(width: padding),
+              )),
+        ),
+        SizedBox(width: 20),
         FloatingActionButton(
           heroTag: "btn3",
           backgroundColor: Colors.black,
@@ -343,10 +362,7 @@ class _MoreWidgetState extends State<MoreWidget> {
           onPressed: () async {
             setState(() {
               isOpen = !isOpen;
-              padding = 0.0;
-            });
-            setState(() {
-              padding = 20.0;
+              padding = isOpen ? 60 : 0.0;
             });
           },
         )
