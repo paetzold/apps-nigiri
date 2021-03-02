@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mappy/ui/screens/accountEditScreen.dart';
+import 'package:mappy/ui/screens/account/account.dart';
 import 'package:mappy/ui/screens/home.screen.dart';
-import 'package:mappy/ui/screens/loginScreen.dart';
+import 'package:mappy/ui/screens/searchscreen.dart';
 
-//import '../Home.dart';
+import 'package:page_transition/page_transition.dart';
 
 class App extends StatelessWidget {
   @override
@@ -15,15 +15,26 @@ class App extends StatelessWidget {
       ),
     );
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: _appTheme(),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => HomeScreen(),
-        '/ticket': (context) => LoginScreen(),
-        '/account/edit': (context) => AccountEditScreen(),
-      },
-    );
+        debugShowCheckedModeBanner: false,
+        theme: _appTheme(),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => HomeScreen(),
+          '/account': (context) => DashBoard(),
+          '/account/login': (context) => LoginScreen(),
+          '/account/edit': (context) => AccountEditScreen(),
+        },
+        onGenerateRoute: (settings) {
+          switch (settings.name) {
+            case "/search":
+              return PageTransition(
+                  type: PageTransitionType.rightToLeftWithFade,
+                  child: SearchScreen());
+              break;
+            default:
+              return null;
+          }
+        });
   }
 
   ThemeData _appTheme() {

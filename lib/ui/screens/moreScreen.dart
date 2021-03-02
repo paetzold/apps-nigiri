@@ -14,11 +14,13 @@ class MoreScreen extends StatefulWidget {
 }
 
 class _MoreScreenState extends State<MoreScreen> {
+  var _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return AppScreen(
       title: 'More',
-      child: CustomScrollView(slivers: <Widget>[
+      child: CustomScrollView(controller: _scrollController, slivers: <Widget>[
         SliverList(
           // Use a delegate to build items as they're scrolled on screen.
           delegate: SliverChildBuilderDelegate(

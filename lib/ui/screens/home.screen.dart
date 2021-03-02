@@ -8,7 +8,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:mappy/ui/comps/transitcontext.dart';
 import 'package:mappy/ui/screens/searchscreen.dart';
-import 'package:mappy/ui/screens/LoginScreen.dart';
+
+import 'package:mappy/ui/screens/account/account.dart';
+
 import 'package:mappy/utils/helpers/config.helper.dart';
 import 'package:mappy/utils/helpers/location.helper.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -29,7 +31,7 @@ class HomeScreen extends StatelessWidget {
 
   static MapboxMapController _mapController;
 
-  Line oldLine;
+  static Line oldLine;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +59,7 @@ class HomeScreen extends StatelessWidget {
                         .toList()
                         .cast<LatLng>();
 
-                    Future.delayed(const Duration(milliseconds: 500), () async {
+                    Future.sync(() async {
                       if (oldLine != null) {
                         _mapController.removeLine(oldLine);
                       }
@@ -69,6 +71,8 @@ class HomeScreen extends StatelessWidget {
                             lineOpacity: 0.5,
                             draggable: true),
                       );
+                      _mapController.animateCamera(
+                          CameraUpdate.newLatLngBounds(transitContext.bounds));
                     });
                   }
                   return Stack(
@@ -140,8 +144,8 @@ class HomeScreen extends StatelessWidget {
                                 draggable: false,
                               ),
                             );
-                            await controller.addLine(LineOptions.defaultOptions,
-                                transitContext.polyline);
+/*                             await controller.addLine(LineOptions.defaultOptions,
+                                transitContext.polyline); */
                           },
                           onMapClick:
                               (Point<double> point, LatLng coordinates) {
@@ -181,27 +185,21 @@ class HomeScreen extends StatelessWidget {
                           backgroundColor: Colors.black,
                           child: Icon(Icons.directions),
                           onPressed: () async {
-                            //Navigator.pushNamed(context, '/ticket');
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                    builder: (context) => SearchScreen()));
+                            Navigator.of(context).pushNamed('/search');
+                            // Navigator.push(
+                            //     context,
+                            //     CupertinoPageRoute(
+                            //         builder: (context) => SearchScreen()));
                           },
                         ),
                       ),
-                      Container(
-                        margin: EdgeInsets.all(20),
+                      OnMapButton(
                         alignment: Alignment(1.0, -0.5),
-                        child: FloatingActionButton(
-                          heroTag: "btn5",
-                          backgroundColor: Colors.black,
-                          child: Icon(Icons.place_sharp),
-                          onPressed: () async {
-                            final result = await acquireCurrentLocation();
-                            _mapController.animateCamera(
-                                CameraUpdate.newLatLngZoom(result, 16.0));
-                          },
-                        ),
+                        onPressed: () async {
+                          final result = await acquireCurrentLocation();
+                          _mapController.animateCamera(
+                              CameraUpdate.newLatLngZoom(result, 16.0));
+                        },
                       ),
                     ],
                   );
@@ -290,6 +288,52 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+class OnMapButton extends StatefulWidget {
+  const OnMapButton({
+    Key key,
+    this.alignment,
+    @required Future<Null> Function() onPressed,
+  })  : _onPressed = onPressed,
+        super(key: key);
+
+  final Alignment alignment;
+
+  final Future<Null> Function() _onPressed;
+
+  @override
+  _OnMapButtonState createState() => _OnMapButtonState();
+}
+
+class _OnMapButtonState extends State<OnMapButton> {
+  var processing = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(20),
+      alignment: widget.alignment,
+      child: FloatingActionButton(
+        heroTag: "btn5",
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        child: processing
+            ? CircularProgressIndicator(backgroundColor: Colors.white)
+            : Icon(Icons.place_sharp),
+        onPressed: () async {
+          setState(() {
+            processing = true;
+          });
+          await widget._onPressed();
+          await Future.delayed(Duration(milliseconds: 300));
+          setState(() {
+            processing = false;
+          });
+        },
+      ),
+    );
+  }
+}
+
 class MoreWidget extends StatefulWidget {
   final Alignment alignment;
 
@@ -311,50 +355,51 @@ class _MoreWidgetState extends State<MoreWidget> {
   bool isOpen = false;
 
   var padding = 0.0;
+  var opacity = 0.0;
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 200),
-      curve: Curves.fastOutSlowIn,
+    return Container(
       margin: EdgeInsets.all(20),
       alignment: this.widget.alignment,
       child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-        AnimatedOpacity(
-          opacity: (padding / 60.0),
+        AnimatedContainer(
           duration: Duration(milliseconds: 200),
-          child: SizedBox(
-            width: padding,
-            child: FloatingActionButton(
-              heroTag: "btn1",
-              backgroundColor: Colors.black,
-              child: Icon(Icons.more_vert),
-              onPressed: () async {
-                //Navigator.pushNamed(context, '/ticket');
-                Navigator.push(context,
-                    CupertinoPageRoute(builder: (context) => MoreScreen()));
-              },
-            ),
+          curve: Curves.fastOutSlowIn,
+          width: padding,
+          child: FloatingActionButton(
+            heroTag: "btn1",
+            backgroundColor: Colors.black,
+            child: Icon(Icons.more_vert),
+            onPressed: () {
+              setState(() {
+                isOpen = false;
+                padding = 0.0;
+              });
+              Navigator.push(context,
+                  CupertinoPageRoute(builder: (context) => MoreScreen()));
+            },
           ),
         ),
-        SizedBox(width: 20),
-        AnimatedOpacity(
-          opacity: (padding / 60.0),
-          duration: Duration(milliseconds: 200),
-          child: SizedBox(
-              width: padding,
-              child: FloatingActionButton(
-                heroTag: "btn2",
-                backgroundColor: Colors.black,
-                child: Icon(Icons.account_circle_sharp),
-                onPressed: () async {
-                  //Navigator.pushNamed(context, '/ticket');
-                  Navigator.push(context,
-                      CupertinoPageRoute(builder: (context) => LoginScreen()));
-                },
-              )),
-        ),
-        SizedBox(width: 20),
+        SizedBox(width: padding / 3),
+        AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            curve: Curves.fastOutSlowIn,
+            width: padding,
+            child: FloatingActionButton(
+              heroTag: "btn2",
+              backgroundColor: Colors.black,
+              child: Icon(Icons.account_circle_sharp),
+              onPressed: () async {
+                setState(() {
+                  isOpen = false;
+                  padding = 0.0;
+                });
+                Navigator.push(context,
+                    CupertinoPageRoute(builder: (context) => LoginScreen()));
+              },
+            )),
+        SizedBox(width: padding / 3),
         FloatingActionButton(
           heroTag: "btn3",
           backgroundColor: Colors.black,
@@ -363,6 +408,7 @@ class _MoreWidgetState extends State<MoreWidget> {
             setState(() {
               isOpen = !isOpen;
               padding = isOpen ? 60 : 0.0;
+              print(opacity);
             });
           },
         )

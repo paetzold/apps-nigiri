@@ -15,15 +15,18 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   var _searchTxt = "";
-
   var _isLoading = false;
-  var _list = List<Location>();
+  var _list;
 
   @override
   Widget build(BuildContext context) {
+    if (_list == null) {
+      _list = TransitContext.of(context).recentUsedLocations();
+    }
+
     return UseTransitContext((context, transitContext, child) {
       return AppScreen(
-        title: 'Search',
+        title: 'Search from here to ',
         child: SingleChildScrollView(
           child: Column(children: [
             SearchTextField(
@@ -57,9 +60,9 @@ class _SearchScreenState extends State<SearchScreen> {
                             leading: Icon(Icons.insert_emoticon),
                             title: new Text(_list[index].name),
                             onTap: () {
+                              Navigator.of(context).pop();
                               transitContext.to(_list[index]);
                               transitContext.search();
-                              Navigator.of(context).pop();
                             },
                           );
                         }),

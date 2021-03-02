@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class SearchTextField extends StatefulWidget {
@@ -21,6 +23,8 @@ class SearchTextField extends StatefulWidget {
 
 class SearchTextFieldState extends State<SearchTextField> {
   final TextEditingController _textController = new TextEditingController();
+
+  bool _isSearching = false;
 
   @override
   Widget build(BuildContext context) {
@@ -56,27 +60,52 @@ class SearchTextFieldState extends State<SearchTextField> {
                         return;
                       }
                       setState(() {
-                        widget.onSearch(text);
+                        _isSearching = true;
+                        Future.sync(() async {
+                          await widget.onSearch(text);
+                          await Future.delayed(Duration(milliseconds: 400));
+                          setState(() {
+                            _isSearching = false;
+                          });
+                        });
                       });
                     },
                     onSubmitted: (text) {
                       setState(() {
-                        widget.onSearch(text);
+                        _isSearching = true;
+                        Future.sync(() async {
+                          await widget.onSearch(text);
+                          await Future.delayed(Duration(milliseconds: 400));
+                          setState(() {
+                            _isSearching = false;
+                          });
+                        });
                       });
                     },
                     controller: _textController,
                   ),
-                  _textController.text.length > 0
-                      ? new IconButton(
-                          icon: new Icon(Icons.clear),
-                          onPressed: () {
-                            setState(() {
-                              _textController.clear();
-                            });
-                          })
-                      : new Container(
-                          height: 0.0,
-                        )
+                  AnimatedSwitcher(
+                    duration: Duration(milliseconds: 200),
+                    child: _isSearching
+                        ? new IconButton(
+                            key: UniqueKey(),
+                            icon: CircularProgressIndicator(),
+                            onPressed: () {},
+                          )
+                        : _textController.text.length > 0
+                            ? new IconButton(
+                                key: UniqueKey(),
+                                icon: new Icon(Icons.clear),
+                                onPressed: () {
+                                  setState(() {
+                                    _textController.clear();
+                                  });
+                                })
+                            : new Container(
+                                key: UniqueKey(),
+                                height: 0.0,
+                              ),
+                  )
                 ]),
           ),
         ],

@@ -20,6 +20,7 @@ dependencies:
 
   # HTTP
   http: ^0.12.2
+  equatable: ^0.6.0
   sliding_up_panel: ^1.0.2
   flutter_inappwebview: any
   cached_network_image : any
@@ -30,6 +31,9 @@ dependencies:
   
   # Misc
   adobe_xd : any
+  keyboard_avoider: any
+  styled_text: ^1.0.3+4
+  page_transition: ^1.1.7+6
 
 dev_dependencies:
   flutter_test:

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mappy/XDTextStyles.dart';
+import 'package:mappy/ui/comps/ui-collection.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import 'appScreen.dart';
+import '../appScreen.dart';
 
 class User {
   static const String PassionCooking = 'cooking';
@@ -34,12 +36,32 @@ class AccountEditScreen extends StatefulWidget {
 
 class _AccountEditScreenState extends State<AccountEditScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _focusNode = FocusNode();
 
   var _user = User();
 
   @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() {
+      print("appscrreen:" + AppScreen.of(context).toString());
+      print("Has focus: ${_focusNode.hasFocus}");
+      //AppScreen.of(context).stickyFocus(true);
+/*       AppScreen.of(context).scrollController.animateTo(
+          MediaQuery.of(context).viewInsets.bottom,
+          duration: Duration(milliseconds: 1000),
+          curve: Curves.linearToEaseOut); */
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).viewInsets.bottom);
     return AppScreen(
       title: 'Your Account',
       child: Builder(
@@ -101,6 +123,7 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                       ),
                     ]),
                     TextFormField(
+                      focusNode: _focusNode,
                       decoration: InputDecoration(
                         labelText: 'State',
                         focusedBorder: UnderlineInputBorder(),
@@ -114,81 +137,11 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                       ),
                       onSaved: (val) => setState(() => _user.firstName = val),
                     ),
-                    LinkText(text: ''),
-                    FlatButton(
-                      onPressed: () {
-                        _formKey.currentState.save();
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                            content:
-                                Text('Submitting form ' + _user.toString()),
-                            backgroundColor: Colors.redAccent,
-                            duration: Duration(seconds: 1)));
-                      },
-                      color: Colors.black,
-                      highlightColor: Colors.grey,
-                      child: Text('Ok', style: XDTextStyles.strong),
-                      padding: const EdgeInsets.all(15.0),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(30.0)),
-                    ),
+                    SizedBox(height: 32),
+                    StyledButton('Ok',
+                        color: Colors.black,
+                        onPressed: () => {Navigator.of(context).pop()}),
                   ]))),
-    );
-  }
-}
-
-class PasswordFormField extends StatelessWidget {
-  final String labelText;
-  final void Function(String val) onSaved;
-
-  final TextEditingController _controller = new TextEditingController();
-
-  PasswordFormField({
-    Key key,
-    this.labelText = '',
-    this.onSaved,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: _controller,
-      decoration: InputDecoration(
-        labelText: labelText,
-        focusedBorder: UnderlineInputBorder(),
-        suffixIcon: IconButton(
-            icon: Icon(Icons.remove_red_eye),
-            onPressed: () {
-              _controller.clear();
-            }),
-      ),
-      onSaved: this.onSaved,
-      obscureText: true,
-    );
-  }
-}
-
-class LinkText extends StatelessWidget {
-  const LinkText({
-    Key key,
-    this.text,
-    this.target = '',
-  }) : super(key: key);
-
-  final text, target;
-
-  @override
-  Widget build(
-    BuildContext context,
-  ) {
-    return FlatButton(
-      onPressed: () {
-        Navigator.of(context).pushNamed(target);
-      },
-      child: Text(text,
-          style: (TextStyle(
-            decoration: TextDecoration.underline,
-            fontWeight: FontWeight.bold,
-          ))),
     );
   }
 }

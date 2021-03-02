@@ -1,29 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mappy/XDTextStyles.dart';
+import 'package:mappy/ui/comps/ui-collection.dart';
 
-import 'appScreen.dart';
-
-class User {
-  static const String PassionCooking = 'cooking';
-  static const String PassionHiking = 'hiking';
-  static const String PassionTraveling = 'traveling';
-  String firstName = '';
-  String lastName = '';
-  Map passions = {
-    PassionCooking: false,
-    PassionHiking: false,
-    PassionTraveling: false
-  };
-  bool newsletter = false;
-  save() {
-    print('saving user using a web service');
-  }
-
-  @override
-  String toString() {
-    return firstName + ' ' + lastName;
-  }
-}
+import '../appScreen.dart';
+import 'accountEditScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -59,23 +39,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       onSaved: (val) => setState(() => _user.lastName = val),
                     ),
                     LinkText(text: 'Forgot password ?'),
-                    FlatButton(
-                      onPressed: () {
-                        _formKey.currentState.save();
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                            content:
-                                Text('Submitting form ' + _user.toString()),
-                            backgroundColor: Colors.redAccent,
-                            duration: Duration(seconds: 1)));
-                        Navigator.of(context).pushNamed("/account/edit");
-                      },
-                      color: Colors.black,
-                      highlightColor: Colors.grey,
-                      child: Text('Ok', style: XDTextStyles.strong),
-                      padding: const EdgeInsets.all(15.0),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(30.0)),
-                    ),
+                    StyledButton('Ok', color: Colors.black, onPressed: () {
+                      _formKey.currentState.save();
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text('Submitting form ' + _user.toString()),
+                          backgroundColor: Colors.redAccent,
+                          duration: Duration(seconds: 1)));
+                      Navigator.of(context).pushNamed("/account");
+                    })
                   ]))),
     );
   }
@@ -108,32 +79,6 @@ class PasswordFormField extends StatelessWidget {
       ),
       onSaved: this.onSaved,
       obscureText: true,
-    );
-  }
-}
-
-class LinkText extends StatelessWidget {
-  const LinkText({
-    Key key,
-    this.text,
-    this.target = '',
-  }) : super(key: key);
-
-  final text, target;
-
-  @override
-  Widget build(
-    BuildContext context,
-  ) {
-    return FlatButton(
-      onPressed: () {
-        Navigator.of(context).pushNamed(target);
-      },
-      child: Text(text,
-          style: (TextStyle(
-            decoration: TextDecoration.underline,
-            fontWeight: FontWeight.bold,
-          ))),
     );
   }
 }

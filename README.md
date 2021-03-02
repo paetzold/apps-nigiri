@@ -30,3 +30,8 @@ Intersting lings customize
 
 https://blog.codemagic.io/inappwebview-the-real-power-of-webviews-in-flutter/
 https://blog.codemagic.io/creating-a-route-calculator-using-google-maps/
+
+
+
+Interesting
+https://dart.dev/guides/language/effective-dart/usage
