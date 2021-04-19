@@ -1,228 +1,166 @@
-import 'dart:math';
-import 'dart:typed_data';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:mappy/ui/comps/transitcontext.dart';
-import 'package:mappy/ui/screens/searchscreen.dart';
-
-import 'package:mappy/ui/screens/account/account.dart';
+import 'package:mappy/ui/comps/transitmap.dart';
 
 import 'package:mappy/utils/helpers/config.helper.dart';
 import 'package:mappy/utils/helpers/location.helper.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-import '../../blocs/geocoding.bloc.dart';
-import '../../blocs/geocoding.event.dart';
-import '../../blocs/geocoding.state.dart';
-import 'moreScreen.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 
-class HomeScreen extends StatelessWidget {
+import '../../blocs/geocoding.bloc.dart';
+import '../../blocs/geocoding.state.dart';
+
+class HomeScreen extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<TransitMapState> _mapKey = GlobalKey();
+
+  final PanelController _pc = PanelController();
+
+  var _selectedStop;
+
   final BorderRadiusGeometry radius = BorderRadius.only(
     topLeft: Radius.circular(24.0),
     topRight: Radius.circular(24.0),
   );
 
-  final PanelController _pc = PanelController();
-
-  static MapboxMapController _mapController;
-
-  static Line oldLine;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: UseTransitContext((context, transitContext, child) =>
-            FutureBuilder(
-              future: loadConfigFile(),
-              builder: (
-                BuildContext cntx,
-                AsyncSnapshot<Map<String, dynamic>> snapshot,
-              ) {
-                if (snapshot.hasData) {
-                  final String token =
-                      snapshot.data['mapbox_api_token'] as String;
-                  final String style =
-                      snapshot.data['mapbox_style_url'] as String;
+        body:
+            UseTransitContext((context, transitContext, child) => FutureBuilder(
+                  future: loadConfigFile(),
+                  builder: (
+                    BuildContext cntx,
+                    AsyncSnapshot<Map<String, dynamic>> snapshot,
+                  ) {
+                    if (snapshot.hasData) {
+                      final String token =
+                          snapshot.data['mapbox_api_token'] as String;
+                      final String style =
+                          snapshot.data['mapbox_style_url'] as String;
 
-                  if (_mapController != null &&
-                      transitContext.polyline != null) {
-                    _mapController.clearLines();
-                    var t = transitContext.polyline
-                        .map((p) {
-                          return LatLng(p[0], p[1]);
-                        })
-                        .toList()
-                        .cast<LatLng>();
-
-                    Future.sync(() async {
-                      if (oldLine != null) {
-                        _mapController.removeLine(oldLine);
-                      }
-                      oldLine = await _mapController.addLine(
-                        LineOptions(
-                            geometry: t,
-                            lineColor: "#ff0000",
-                            lineWidth: 4.0,
-                            lineOpacity: 0.5,
-                            draggable: true),
-                      );
-                      _mapController.animateCamera(
-                          CameraUpdate.newLatLngBounds(transitContext.bounds));
-                    });
-                  }
-                  return Stack(
-                    children: [
-                      SlidingUpPanel(
-                        controller: _pc,
-                        parallaxEnabled: true,
-                        parallaxOffset: 0.5,
-                        header: Container(
-                          width: MediaQuery.of(context).size.width,
-                          color: Colors.white,
-                          height: 30,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                width: 30,
-                                height: 5,
-                                decoration: BoxDecoration(
-                                    color: Colors.grey[300],
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(12.0))),
+                      return Stack(
+                        children: [
+                          SlidingUpPanel(
+                            controller: _pc,
+                            parallaxEnabled: true,
+                            parallaxOffset: 0.5,
+                            header: Container(
+                              width: MediaQuery.of(context).size.width,
+                              color: Colors.white,
+                              height: 30,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    width: 30,
+                                    height: 5,
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey[300],
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(12.0))),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
+                            panelBuilder: (ScrollController _sc) => ListView(
+                              controller: _sc,
+                              children: [
+                                SizedBox(
+                                  height: 4.0,
+                                ),
+                                Center(
+                                    child: Text(
+                                        (_selectedStop != null)
+                                            ? _selectedStop['name'] +
+                                                " (" +
+                                                _selectedStop['id'] +
+                                                ")"
+                                            : "Please Select a Stop",
+                                        style: Theme.of(context)
+                                            .primaryTextTheme
+                                            .headline5)),
+                                FlatButton(
+                                  onPressed: () {
+                                    _pc.close();
+                                  },
+                                  child: Text("Close it again "),
+                                ),
+                                SizedBox(
+                                  height: 800.0,
+                                  child: InAppWebView(
+                                      initialData: InAppWebViewInitialData(
+                                          // initialUrl: 'https://github.com/flutter'
+                                          )),
+                                )
+                              ],
+                            ),
+                            body: TransitMap(
+                                key: _mapKey,
+                                api_key: token,
+                                style: style,
+                                onSelectStop: (s) {
+                                  /**_selectedStop = s */
+
+                                  setState(() {
+                                    _selectedStop = s;
+                                  });
+                                  _pc.open();
+                                  print(s);
+                                },
+                                route: transitContext.polyline,
+                                bounds: transitContext.bounds),
+                            borderRadius: radius,
                           ),
-                        ),
-                        panelBuilder: (ScrollController _sc) => ListView(
-                          controller: _sc,
-                          children: [
-                            SizedBox(
-                              height: 18.0,
-                            ),
-                            Center(
-                              child: Text("This is the sliding Widget"),
-                            ),
-                            FlatButton(
-                              onPressed: () {
-                                _pc.close();
+                          MoreWidget(alignment: Alignment(1.0, -0.9)),
+                          Container(
+                            margin: EdgeInsets.all(20),
+                            alignment: Alignment(1.0, -0.7),
+                            child: FloatingActionButton(
+                              heroTag: "btn4",
+                              backgroundColor: Colors.black,
+                              child: Icon(Icons.directions),
+                              onPressed: () async {
+                                Navigator.of(context).pushNamed('/search');
                               },
-                              child: Text("Close it again "),
                             ),
+                          ),
+                          OnMapButton(
+                              alignment: Alignment(1.0, -0.5),
+                              onPressed: () async {
+                                final result = await acquireCurrentLocation();
+                                _mapKey.currentState.animateTo(result, 16.0);
+                              }),
+                        ],
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircularProgressIndicator(),
                             SizedBox(
-                                height: 800.0,
-                                child: InAppWebView(
-                                    initialUrl: 'https://github.com/flutter')),
+                              height: 16.0,
+                            ),
+                            Text(
+                                'Error has occurred: ${snapshot.error.toString()}')
                           ],
                         ),
-                        body: MapboxMap(
-                          accessToken: token,
-                          styleString: style,
-                          minMaxZoomPreference:
-                              const MinMaxZoomPreference(6.0, null),
-                          initialCameraPosition: CameraPosition(
-                            zoom: 1.0,
-                            target: LatLng(53.8, 9),
-                          ),
-                          onMapCreated: (MapboxMapController controller) async {
-                            HomeScreen._mapController = controller;
-                            final result = await acquireCurrentLocation();
-                            await controller.animateCamera(
-                              CameraUpdate.newLatLng(result),
-                            );
-                            await controller.addCircle(
-                              CircleOptions(
-                                circleRadius: 8.0,
-                                circleColor: '#006992',
-                                circleOpacity: 0.5,
-                                geometry: result,
-                                draggable: false,
-                              ),
-                            );
-/*                             await controller.addLine(LineOptions.defaultOptions,
-                                transitContext.polyline); */
-                          },
-                          onMapClick:
-                              (Point<double> point, LatLng coordinates) {
-                            BlocProvider.of<GeocodingBloc>(context).add(
-                              RequestGeocodingEvent(
-                                latitude: coordinates.latitude,
-                                longitude: coordinates.longitude,
-                              ),
-                            );
-                            _setupBottomModalSheet(cntx);
-                          },
-                          onMapLongClick:
-                              (Point<double> point, LatLng coordinates) async {
-                            final ByteData imageBytes =
-                                await rootBundle.load('assets/place_24px.png');
-                            final Uint8List bytesList =
-                                imageBytes.buffer.asUint8List();
-                            await _mapController.addImage(
-                                'place_icon', bytesList);
-                            await _mapController.addSymbol(
-                              SymbolOptions(
-                                iconImage: 'place_icon',
-                                iconSize: 2.5,
-                                geometry: coordinates,
-                              ),
-                            );
-                          },
-                        ),
-                        borderRadius: radius,
-                      ),
-                      MoreWidget(alignment: Alignment(1.0, -0.9)),
-                      Container(
-                        margin: EdgeInsets.all(20),
-                        alignment: Alignment(1.0, -0.7),
-                        child: FloatingActionButton(
-                          heroTag: "btn4",
-                          backgroundColor: Colors.black,
-                          child: Icon(Icons.directions),
-                          onPressed: () async {
-                            Navigator.of(context).pushNamed('/search');
-                            // Navigator.push(
-                            //     context,
-                            //     CupertinoPageRoute(
-                            //         builder: (context) => SearchScreen()));
-                          },
-                        ),
-                      ),
-                      OnMapButton(
-                        alignment: Alignment(1.0, -0.5),
-                        onPressed: () async {
-                          final result = await acquireCurrentLocation();
-                          _mapController.animateCamera(
-                              CameraUpdate.newLatLngZoom(result, 16.0));
-                        },
-                      ),
-                    ],
-                  );
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CircularProgressIndicator(),
-                        SizedBox(
-                          height: 16.0,
-                        ),
-                        Text('Error has occurred: ${snapshot.error.toString()}')
-                      ],
-                    ),
-                  );
-                } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-            )));
+                      );
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                )));
   }
 
   void _setupBottomModalSheet(BuildContext buildContext) {
@@ -318,7 +256,7 @@ class _OnMapButtonState extends State<OnMapButton> {
         foregroundColor: Colors.white,
         child: processing
             ? CircularProgressIndicator(backgroundColor: Colors.white)
-            : Icon(Icons.place_sharp),
+            : Icon(Icons.location_searching_rounded),
         onPressed: () async {
           setState(() {
             processing = true;
@@ -376,8 +314,25 @@ class _MoreWidgetState extends State<MoreWidget> {
                 isOpen = false;
                 padding = 0.0;
               });
-              Navigator.push(context,
-                  CupertinoPageRoute(builder: (context) => MoreScreen()));
+              Navigator.of(context).pushNamed('/more');
+            },
+          ),
+        ),
+        SizedBox(width: padding / 3),
+        AnimatedContainer(
+          duration: Duration(milliseconds: 200),
+          curve: Curves.fastOutSlowIn,
+          width: padding,
+          child: FloatingActionButton(
+            heroTag: "btn0",
+            backgroundColor: Colors.black,
+            child: Icon(Foundation.ticket),
+            onPressed: () {
+              setState(() {
+                isOpen = false;
+                padding = 0.0;
+              });
+              Navigator.of(context).pushNamed('/ticket');
             },
           ),
         ),
@@ -395,8 +350,7 @@ class _MoreWidgetState extends State<MoreWidget> {
                   isOpen = false;
                   padding = 0.0;
                 });
-                Navigator.push(context,
-                    CupertinoPageRoute(builder: (context) => LoginScreen()));
+                Navigator.of(context).pushNamed('/account');
               },
             )),
         SizedBox(width: padding / 3),
@@ -408,7 +362,6 @@ class _MoreWidgetState extends State<MoreWidget> {
             setState(() {
               isOpen = !isOpen;
               padding = isOpen ? 60 : 0.0;
-              print(opacity);
             });
           },
         )

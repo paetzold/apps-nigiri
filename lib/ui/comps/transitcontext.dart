@@ -11,35 +11,12 @@ class TransitContext extends ChangeNotifier {
 
   List<Location> recently = List<Location>();
 
-  List<List<num>> polyline;
   var bounds;
+  var routes;
+  List<List<num>> polyline;
 
   static TransitContext of(BuildContext context) =>
       Provider.of<TransitContext>(context);
-
-  /// Internal, private state of the cart.
-  //final List<Item> _items = [];
-
-  /// An unmodifiable view of the items in the cart.
-  //UnmodifiableListView<Item> get items => UnmodifiableListView(_items);
-
-  /// The current total price of all items (assuming all items cost $42).
-  //int get totalPrice => _items.length * 42;
-
-  /// Adds [item] to cart. This and [removeAll] are the only ways to modify the
-  /// cart from the outside.
-  //void add(Item item) {
-  //  _items.add(item);
-  // This call tells the widgets that are listening to this model to rebuild.
-  //  notifyListeners();
-  //}
-
-  /// Removes all items from the cart.
-  //void removeAll() {
-  //  _items.clear();
-  // This call tells the widgets that are listening to this model to rebuild.
-  //  notifyListeners();
-  //}
 
   from(Location orgin) {
     this.origin = origin;
@@ -67,6 +44,7 @@ class TransitContext extends ChangeNotifier {
     var temp = origin;
     origin = destination;
     destination = temp;
+    notifyListeners();
   }
 
   search() {
@@ -83,7 +61,7 @@ class TransitContext extends ChangeNotifier {
       if (status == DirectionsStatus.ok) {
         // do something with successful response
         print(response.routes);
-
+        routes = response.routes;
         polyline = decodePolyline(response.routes[0].overviewPolyline.points);
 
         var sw = polyline.reduce((value, element) =>

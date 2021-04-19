@@ -3,8 +3,9 @@ import 'package:http/http.dart' as http;
 
 class ApiProvider {
   final String baseURL;
+  final bool insecure;
 
-  const ApiProvider({this.baseURL});
+  ApiProvider({this.baseURL, this.insecure});
 
   Future<Map<String, dynamic>> makeGetRequest(
     String endpoint, {
@@ -12,7 +13,7 @@ class ApiProvider {
     Map<String, String> headers,
   }) async {
     final http.Response response = await http.get(
-      Uri.https(baseURL, endpoint, queryParams),
+      _buildUri(endpoint, queryParams),
       headers: headers,
     );
 
@@ -20,7 +21,7 @@ class ApiProvider {
       return null;
     }
 
-    return json.decode(response.body) as Map<String, dynamic>;
+    return json.decode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
   }
 
   Future<List<dynamic>> makeGetListRequest(
@@ -29,7 +30,7 @@ class ApiProvider {
     Map<String, String> headers,
   }) async {
     final http.Response response = await http.get(
-      Uri.https(baseURL, endpoint, queryParams),
+      _buildUri(endpoint, queryParams),
       headers: headers,
     );
 
@@ -37,6 +38,12 @@ class ApiProvider {
       return null;
     }
 
-    return json.decode(response.body) as List<dynamic>;
+    return json.decode(utf8.decode(response.bodyBytes)) as List<dynamic>;
+  }
+
+  Uri _buildUri(String endpoint, Map<String, String> queryParams) {
+    return this.insecure
+        ? Uri.http(baseURL, endpoint, queryParams)
+        : Uri.https(baseURL, endpoint, queryParams);
   }
 }

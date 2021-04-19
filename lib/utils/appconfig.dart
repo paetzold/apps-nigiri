@@ -1,36 +1,31 @@
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+class Link {
+  final title;
+  final subTitle;
+  final url;
+  Link(this.title, this.url, {this.subTitle});
+}
+
 class AppConfig extends ChangeNotifier {
-  /// Internal, private state of the cart.
-  //final List<Item> _items = [];
-
-  /// An unmodifiable view of the items in the cart.
-  //UnmodifiableListView<Item> get items => UnmodifiableListView(_items);
-
-  /// The current total price of all items (assuming all items cost $42).
-  //int get totalPrice => _items.length * 42;
-
-  /// Adds [item] to cart. This and [removeAll] are the only ways to modify the
-  /// cart from the outside.
-  //void add(Item item) {
-  //  _items.add(item);
-  // This call tells the widgets that are listening to this model to rebuild.
-  //  notifyListeners();
-  //}
-
-  /// Removes all items from the cart.
-  //void removeAll() {
-  //  _items.clear();
-  // This call tells the widgets that are listening to this model to rebuild.
-  //  notifyListeners();
-  //}
-
-  List<String> get links => [
-        "https://paetzold.github.io/newmobility/",
-        "https://dvg.mobilesticket.de/ticketportal/#/login",
-        "http://www.hansecom.de",
-        "http://www.golem.de",
+  List<Link> get links => [
+        Link("About", "https://paetzold.github.io/newmobility/#/about",
+            subTitle: "Some wise words ..."),
+        Link("Download", "https://paetzold.github.io/newmobility/#/download",
+            subTitle: "An easy way to download the Android version."),
+        Link("Impressions", "https://paetzold.github.io/newmobility/#/images",
+            subTitle: "Nice images from unsplash."),
+        Link("Contact Us", "mailto:kay.paetzold@gmail.com?subject=HeyHey",
+            subTitle: "Mmmh this doesn't work yet."),
+        Link("DVG Ticketshop",
+            "https://dvg.mobilesticket.de/ticketportal/#/login",
+            subTitle: "A link to old times"),
+        Link("Hansecom", "http://www.hansecom.de",
+            subTitle: "Lin into the new times."),
+        Link("Flutter", "https://www.youtube.com/watch?v=5VbAwhBBHsg",
+            subTitle: "Does flutter rock?"),
       ];
 }
 

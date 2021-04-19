@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:keyboard_avoider/keyboard_avoider.dart';
-import 'package:mappy/utils/appconfig.dart';
 
 class AppScreen extends StatefulWidget {
   final Widget child;
@@ -38,12 +37,15 @@ class AppScreenState extends State<AppScreen> {
     return Scaffold(
         appBar: AppBar(leading: left),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(widget.title, style: Theme.of(context).textTheme.headline1),
-              SizedBox(height: 16.0),
+              widget.title != null
+                  ? Text(widget.title,
+                      style: Theme.of(context).textTheme.headline1)
+                  : SizedBox(),
+              widget.title != null ? SizedBox(height: 16) : SizedBox(),
               Expanded(
                 child: KeyboardAvoider(
                   child: widget.child,

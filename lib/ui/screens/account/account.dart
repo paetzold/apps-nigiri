@@ -1,3 +1,3 @@
 export 'loginScreen.dart';
 export 'accountEditScreen.dart';
-export 'dashboard.dart';
+export 'accountDashboardScreen.dart';

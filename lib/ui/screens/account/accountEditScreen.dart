@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mappy/XDTextStyles.dart';
 import 'package:mappy/ui/comps/ui-collection.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../appScreen.dart';
 
@@ -11,6 +9,7 @@ class User {
   static const String PassionTraveling = 'traveling';
   String firstName = '';
   String lastName = '';
+  String email = '';
   Map passions = {
     PassionCooking: false,
     PassionHiking: false,
@@ -63,7 +62,7 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
   @override
   Widget build(BuildContext context) {
     return AppScreen(
-      title: 'Your Account',
+      title: 'Your Personal Data',
       child: Builder(
           builder: (context) => Form(
               key: _formKey,
@@ -145,3 +144,5 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
     );
   }
 }
+
+// https://medium.com/flutter-community/realistic-forms-in-flutter-part-1-327929dfd6fd

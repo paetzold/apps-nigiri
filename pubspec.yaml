@@ -11,6 +11,11 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Add the dependency for the FlutterFire plugin for Google Analytics
+  firebase_core: any
+  firebase_analytics: any
+  firebase_remote_config: any
+
   # Architecture
   flutter_bloc: ^6.0.6
 
@@ -34,7 +39,11 @@ dependencies:
   keyboard_avoider: any
   styled_text: ^1.0.3+4
   page_transition: ^1.1.7+6
-
+  splashscreen: ^1.3.5
+  modal_bottom_sheet: any
+  flutter_icons: any
+  barcode_generator: any
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -48,6 +57,4 @@ flutter_icons:
 flutter:
   uses-material-design: true
   assets:
-    - assets/appConfig.json
-    - assets/mappy_icon.png
-    - assets/place_24px.png
+    - assets/

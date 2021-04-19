@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mappy/api/geo.api.dart';
-import 'package:mappy/api/models/location.dart';
 import 'package:mappy/ui/comps/searchtextfield.dart';
 import 'package:mappy/ui/comps/transitcontext.dart';
 
@@ -36,7 +35,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     _isLoading = true;
                   });
                   var results =
-                      await GeoApiRepository.instance.searchByName(data);
+                      await GeoApiRepository.instance.searchByName(data, false);
                   setState(() {
                     _searchTxt = data;
                     _isLoading = false;
@@ -45,8 +44,12 @@ class _SearchScreenState extends State<SearchScreen> {
                 }),
             _list == null
                 ? Center(
-                    child:
-                        _isLoading ? CircularProgressIndicator() : Container(),
+                    child: _isLoading
+                        ? Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CircularProgressIndicator(),
+                          )
+                        : Container(),
                   )
                 : SizedBox(
                     height: 800,
@@ -60,9 +63,11 @@ class _SearchScreenState extends State<SearchScreen> {
                             leading: Icon(Icons.insert_emoticon),
                             title: new Text(_list[index].name),
                             onTap: () {
-                              Navigator.of(context).pop();
                               transitContext.to(_list[index]);
                               transitContext.search();
+                              Future.delayed(Duration(milliseconds: 100), () {
+                                Navigator.of(context).pop();
+                              });
                             },
                           );
                         }),

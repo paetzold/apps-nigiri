@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:mappy/utils/appconfig.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -28,10 +27,14 @@ class _MoreScreenState extends State<MoreScreen> {
             // displays the index of the current item.
             (context, index) => UseAppConfig((context, appConfig, child) {
               return InkWell(
-                  onTap: () => launch(appConfig.links[index]),
+                  onTap: () =>
+                      launch(appConfig.links[index].url, forceWebView: true),
                   child: ListTile(
                       contentPadding: EdgeInsets.all(0),
-                      title: Text(appConfig.links[index])));
+                      title: Text(appConfig.links[index].title),
+                      subtitle: appConfig.links[index].subTitle != null
+                          ? Text(appConfig.links[index].subTitle)
+                          : Text(appConfig.links[index].url)));
             }),
             // Builds 1000 ListTiles
             childCount: Provider.of<AppConfig>(context).links.length,

@@ -15,10 +15,7 @@ class SearchTextField extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return new SearchTextFieldState();
-  }
+  State<StatefulWidget> createState() => SearchTextFieldState();
 }
 
 class SearchTextFieldState extends State<SearchTextField> {
@@ -28,7 +25,6 @@ class SearchTextFieldState extends State<SearchTextField> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Container(
       decoration: new BoxDecoration(
           color: widget.backgroundColor,
@@ -51,7 +47,8 @@ class SearchTextFieldState extends State<SearchTextField> {
                   new TextField(
                     autofocus: true,
                     decoration: InputDecoration(
-                      hintText: 'Search',
+                      hintText:
+                          'Least type at least ${widget.searchAfterChars} characters.',
                       // focusedBorder: UnderlineInputBorder(),
                       border: InputBorder.none,
                     ),
@@ -110,6 +107,75 @@ class SearchTextFieldState extends State<SearchTextField> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class SearchFragment extends StatefulWidget {
+  final Function onSearch;
+  final Function onSelect;
+  final searchAfterChars;
+  final backgroundColor;
+
+  SearchFragment(
+      {Key key,
+      this.searchAfterChars = 2,
+      this.backgroundColor = Colors.black12,
+      this.onSearch,
+      this.onSelect})
+      : super(key: key);
+
+  @override
+  _SearchFragmentState createState() => _SearchFragmentState();
+}
+
+class _SearchFragmentState extends State<SearchFragment> {
+  List _list;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_list == null && widget.searchAfterChars == 0) {
+      Future.microtask(() async {
+        var results = await widget.onSearch("a");
+        setState(() {
+          _list = []..addAll(results.locations);
+        });
+      });
+    }
+
+    return Container(
+      child: Column(children: [
+        SearchTextField(
+            searchAfterChars: widget.searchAfterChars,
+            backgroundColor: widget.backgroundColor,
+            onSearch: (data) async {
+              var results = await widget.onSearch(data);
+              setState(() {
+                _list = []..addAll(results.locations);
+              });
+            }),
+        Expanded(
+          child: Container(
+            child: ListView.builder(
+                padding: EdgeInsets.all(8),
+                itemCount: _list != null ? _list.length : 0,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    visualDensity: VisualDensity(horizontal: -4, vertical: 0),
+                    leading: Icon(Icons.location_city),
+                    title: new Text(_list[index].name),
+                    onTap: () {
+                      if (widget.onSelect != null) {
+                        widget.onSelect(index, _list[index]);
+                      }
+                      Navigator.of(context).pop();
+                    },
+                  );
+                }),
+          ),
+        )
+      ]),
     );
   }
 }
