@@ -27,7 +27,7 @@ dependencies:
   http: ^0.12.2
   equatable: ^0.6.0
   sliding_up_panel: ^1.0.2
-  flutter_inappwebview: any
+  flutter_inappwebview: ^5.2.0
   cached_network_image : any
   shared_preferences : any
   url_launcher : any

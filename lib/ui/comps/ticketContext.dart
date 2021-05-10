@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -37,6 +38,7 @@ class TicketCtx extends ChangeNotifier {
   void mockAdd(var toAdd) {
     _tickets.add(toAdd);
     _persist();
+    sleep(Duration(seconds: 1));
   }
 }
 

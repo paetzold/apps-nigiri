@@ -42,14 +42,14 @@ class _ChangePasswdScreenState extends State<ChangePasswdScreen> {
                       ),
                       onSaved: (val) => setState(() => val),
                     ),
-                    TextFormField(
+                    PasswordFormField(
                       decoration: InputDecoration(
                         labelText: 'New Password',
                         focusedBorder: UnderlineInputBorder(),
                       ),
                       onSaved: (val) => setState(() => val),
                     ),
-                    TextFormField(
+                    PasswordFormField(
                       decoration: InputDecoration(
                         labelText: 'New Password (Repeat)',
                         focusedBorder: UnderlineInputBorder(),

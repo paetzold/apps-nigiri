@@ -7,10 +7,10 @@ import 'package:mappy/ui/comps/usercontext.dart';
 import 'package:mappy/ui/screens/account/NotificationScreen.dart';
 import 'package:mappy/ui/screens/account/account.dart';
 import 'package:mappy/ui/screens/account/changePasswdScreen.dart';
-import 'package:mappy/ui/screens/account/forgottenPasswd.dart';
-import 'package:mappy/ui/screens/home.screen.dart';
+import 'package:mappy/ui/screens/account/forgottenPasswdScreen.dart';
+import 'package:mappy/ui/screens/homeScreen.dart';
 import 'package:mappy/ui/screens/moreScreen.dart';
-import 'package:mappy/ui/screens/searchscreen.dart';
+import 'package:mappy/ui/screens/searchScreen.dart';
 import 'package:mappy/ui/screens/tickets/ticketHome.dart';
 import 'package:mappy/ui/screens/tickets/ticketScreen.dart';
 

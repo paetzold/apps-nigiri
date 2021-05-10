@@ -110,7 +110,7 @@ class StyledButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlatButton(
-      onPressed: onPressed != null ? onPressed : () => {},
+      onPressed: this._onPressed,
       color: color,
       highlightColor: brighten(color),
       child: Text(text, style: XDTextStyles.strong),
@@ -118,6 +118,12 @@ class StyledButton extends StatelessWidget {
       shape:
           RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
     );
+  }
+
+  void _onPressed() async {
+    if (onPressed != null) {
+      await onPressed();
+    }
   }
 }
 

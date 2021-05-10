@@ -6,24 +6,28 @@ import 'models/location.dart';
 abstract class GeoApiRepository {
   static final GeoApiRepository instance = _GeoNetApiRepository._();
 
-  Future<LocationList> searchByName(String name, bool showAll) {}
-  Future<LocationList> searchWithin(LatLngBounds bounds) {}
+  Future<LocationList> searchByName(String name, bool showAll);
+  Future<LocationList> searchWithin(LatLngBounds bounds);
 }
 
-// class _MaturoGeoApiRepository implements GeoApiRepository {
-//   final ApiProvider _provider = ApiProvider(baseURL: 'marudor.de');
+class _MaturoGeoApiRepository implements GeoApiRepository {
+  final ApiProvider _provider = ApiProvider(baseURL: 'marudor.de');
 
-//   _MaturoGeoApiRepository._();
+  _MaturoGeoApiRepository._();
 
-//   Future<LocationList> searchByName(String name, bool showAll) async {
-//     //final accessToken = (await loadConfigFile())['mapbox_api_token'];
-//     final result = await _provider.makeGetRequest(
-//       '/api/station/v1/search/${name}',
-//       queryParams: {'type': 'default'},
-//     );
-//     return result != null ? LocationList.fromJson(result) : LocationList();
-//   }
-// }
+  Future<LocationList> searchByName(String name, bool showAll) async {
+    //final accessToken = (await loadConfigFile())['mapbox_api_token'];
+    final result = await _provider.makeGetRequest(
+      '/api/station/v1/search/$name',
+      queryParams: {'type': 'default'},
+    );
+    return result != null ? LocationList.fromJson(result) : LocationList();
+  }
+
+  Future<LocationList> searchWithin(LatLngBounds bounds) async {
+    return LocationList();
+  }
+}
 
 class _GeoNetApiRepository implements GeoApiRepository {
   final ApiProvider _provider =
@@ -44,7 +48,6 @@ class _GeoNetApiRepository implements GeoApiRepository {
         '${bounds.southwest.latitude},${bounds.southwest.longitude},${bounds.northeast.latitude},${bounds.northeast.longitude}';
     final result = await _provider
         .makeGetRequest('/location/within', queryParams: {'bbox': bbox});
-    print(bbox);
     return result != null ? LocationList.fromJson(result) : LocationList();
   }
 }

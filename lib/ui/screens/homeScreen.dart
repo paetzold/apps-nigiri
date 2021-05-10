@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mappy/ui/comps/transitcontext.dart';
@@ -23,6 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final PanelController _pc = PanelController();
 
+  InAppWebViewController webViewController;
+
   var _selectedStop;
 
   final BorderRadiusGeometry radius = BorderRadius.only(
@@ -32,6 +36,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var panelData = jsonEncode(_selectedStop);
+    if (_selectedStop != null) {
+      panelData =
+          '<html><body style="padding:20pt;font-family: sans-serif; font-size: 30pt">${_selectedStop['name']}</br><pre style="white-space: pre-wrap;word-: keep-all;word-wrap:break-word">${panelData}</pre></body></html>';
+    }
+
+    webViewController?.loadData(data: panelData);
+
     return Scaffold(
         body:
             UseTransitContext((context, transitContext, child) => FutureBuilder(
@@ -87,19 +99,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                         style: Theme.of(context)
                                             .primaryTextTheme
                                             .headline5)),
-                                FlatButton(
-                                  onPressed: () {
-                                    _pc.close();
-                                  },
-                                  child: Text("Close it again "),
-                                ),
+                                // FlatButton(
+                                //   onPressed: () {
+                                //     _pc.close();
+                                //   },
+                                //   child: Text("Close it again "),
+                                // ),
                                 SizedBox(
-                                  height: 800.0,
-                                  child: InAppWebView(
-                                      initialData: InAppWebViewInitialData(
-                                          // initialUrl: 'https://github.com/flutter'
-                                          )),
-                                )
+                                    height: 800.0,
+                                    child: InAppWebView(
+                                        onWebViewCreated: (controller) {
+                                          webViewController = controller;
+                                        },
+                                        initialData: InAppWebViewInitialData(
+                                            data: panelData))
+                                    // child: InAppWebView(
+                                    //     initialUrl: 'https://github.com/flutter')
+
+                                    //initialData: InAppWebViewInitialData(
+                                    // initialUrl: 'https://github.com/flutter'
+                                    // )),
+                                    )
                               ],
                             ),
                             body: TransitMap(
@@ -107,9 +127,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 api_key: token,
                                 style: style,
                                 onSelectStop: (s) {
-                                  /**_selectedStop = s */
-
                                   setState(() {
+                                    transitContext.clearRoutes();
                                     _selectedStop = s;
                                   });
                                   _pc.open();
@@ -261,11 +280,14 @@ class _OnMapButtonState extends State<OnMapButton> {
           setState(() {
             processing = true;
           });
-          await widget._onPressed();
-          await Future.delayed(Duration(milliseconds: 300));
-          setState(() {
-            processing = false;
-          });
+          try {
+            await widget._onPressed();
+            await Future.delayed(Duration(milliseconds: 300));
+          } finally {
+            setState(() {
+              processing = false;
+            });
+          }
         },
       ),
     );

@@ -229,7 +229,7 @@ class TicketOffer extends StatelessWidget {
         Text(product['name'], style: Theme.of(context).textTheme.headline5),
         Text("", style: Theme.of(context).textTheme.headline5),
         StyledButton(
-          "Purchase now " +
+          "Purchase now for " +
               (product['price'][0]).toStringAsFixed(2).replaceAll('.', ',') +
               " €",
           onPressed: () {

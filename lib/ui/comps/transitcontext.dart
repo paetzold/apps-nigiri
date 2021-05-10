@@ -83,6 +83,12 @@ class TransitContext extends ChangeNotifier {
       notifyListeners();
     });
   }
+
+  clearRoutes() {
+    routes = null;
+    polyline = null;
+    notifyListeners();
+  }
 }
 
 Function WithTransitContext = (wrapped) => ChangeNotifierProvider(

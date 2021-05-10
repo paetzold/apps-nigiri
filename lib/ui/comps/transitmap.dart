@@ -33,6 +33,7 @@ class TransitMap extends StatefulWidget {
 
 class TransitMapState extends State<TransitMap> {
   MapboxMapController _mapController;
+  var _selectedSymbol;
 
   void animateTo(LatLng position, double zoom) {
     _mapController.animateCamera(CameraUpdate.newLatLngZoom(position, zoom));
@@ -47,6 +48,8 @@ class TransitMapState extends State<TransitMap> {
       }
       if (widget.route != null) {
         addPolyline(widget.route);
+      } else {
+        _mapController.clearLines();
       }
     }
 
@@ -97,7 +100,11 @@ class TransitMapState extends State<TransitMap> {
             List<SymbolOptions> symbols = l.locations
                 .map((s) {
                   return SymbolOptions(
-                      //textField: s.name,
+                      iconSize: (_selectedSymbol == null)
+                          ? 1
+                          : (s.id == _selectedSymbol?.data["id"])
+                              ? 2
+                              : 1,
                       textOffset: Offset(0, 0.8),
                       textAnchor: 'top',
                       textColor: '#FF0000',
@@ -105,8 +112,7 @@ class TransitMapState extends State<TransitMap> {
                           s.latlon.latitude,
                           s.latlon
                               .longitude), // location is 0.0 on purpose for this example
-                      iconColor: '#FF0000',
-                      iconHaloColor: '#FF0000',
+                      iconOpacity: 1,
                       iconImage: _locationTypeToIconName(s.type));
                 })
                 .cast<SymbolOptions>()
@@ -151,7 +157,7 @@ class TransitMapState extends State<TransitMap> {
       case 'STATION':
         return 'milan-metro';
       default:
-        return '';
+        return 'e-scooter';
     }
   }
 
@@ -174,7 +180,10 @@ class TransitMapState extends State<TransitMap> {
   }
 
   void _onSymbolTapped(Symbol symbol) {
-    print(symbol.data);
+    //print(symbol.data);
+    //setState(() {
+    _selectedSymbol = symbol;
+    //});
     _mapController.animateCamera(CameraUpdate.newLatLng(symbol.data['latLon']));
     if (widget.onSelectStop != null) {
       widget.onSelectStop(symbol.data);
